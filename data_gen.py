@@ -42,7 +42,7 @@ class FrameDataset(Dataset):
 
         # print(filename)
         img = cv.imread(filename)  # BGR
-        img = cv.resize(img, (im_size, im_size))
+        # img = cv.resize(img, (im_size, im_size))
         img = img[..., ::-1]  # RGB
         img = Image.fromarray(img, 'RGB')  # RGB
         img = self.transformer(img)  # RGB
