@@ -7,12 +7,13 @@ import torch
 from torchvision import transforms
 from tqdm import tqdm
 
-from config import im_size, device
+from config import device
 from utils import ensure_folder
 
 src_folder = '../Image-Matching/data/data/frame/cron20190326/'
 dst_folder = 'data/cron20190326_aligned/'
 pickle_file = 'data/data.pkl'
+im_size = 224
 
 if __name__ == "__main__":
     # checkpoint = 'BEST_checkpoint.tar'
