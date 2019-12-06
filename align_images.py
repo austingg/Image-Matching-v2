@@ -13,7 +13,8 @@ from utils import ensure_folder
 src_folder = '../Image-Matching/data/data/frame/cron20190326/'
 dst_folder = 'data/cron20190326_aligned/'
 pickle_file = 'data/data.pkl'
-im_size = 224
+src_im_size = 224
+dst_im_size = 256
 
 if __name__ == "__main__":
     # checkpoint = 'BEST_checkpoint.tar'
@@ -50,7 +51,7 @@ if __name__ == "__main__":
 
         if not is_sample:
             h, w = raw.shape[:2]
-            img = cv.resize(raw, (im_size, im_size))
+            img = cv.resize(raw, (src_im_size, src_im_size))
             img = img[..., ::-1]  # RGB
             img = transforms.ToPILImage()(img)
             img = transformer(img)
@@ -75,13 +76,13 @@ if __name__ == "__main__":
             # cv.imwrite('test/result.jpg', img)
 
             src_pts = output
-            dst_pts = np.float32([[0, 0], [0, im_size], [im_size, im_size], [im_size, 0]]).reshape(-1, 1, 2)
+            dst_pts = np.float32([[0, 0], [0, dst_im_size], [dst_im_size, dst_im_size], [dst_im_size, 0]]).reshape(-1, 1, 2)
             M, _ = cv.findHomography(src_pts, dst_pts, cv.RANSAC, 5.0)
             # print(M)
 
-            img = cv.warpPerspective(raw, M, (im_size, im_size), cv.INTER_CUBIC)
+            img = cv.warpPerspective(raw, M, (dst_im_size, dst_im_size), cv.INTER_CUBIC)
             cv.imwrite(dst_path, img)
 
         else:
-            img = cv.resize(raw, (im_size, im_size), cv.INTER_CUBIC)
+            img = cv.resize(raw, (dst_im_size, dst_im_size), cv.INTER_CUBIC)
             cv.imwrite(dst_path, img)
