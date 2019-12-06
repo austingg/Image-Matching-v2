@@ -12,7 +12,7 @@ from utils import ensure_folder
 
 src_folder = '../Image-Matching/data/data/frame/cron20190326/'
 dst_folder = 'data/cron20190326_aligned/'
-pickle_file = 'data.pkl'
+pickle_file = 'data/data.pkl'
 
 if __name__ == "__main__":
     # checkpoint = 'BEST_checkpoint.tar'
