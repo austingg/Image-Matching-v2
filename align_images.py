@@ -8,7 +8,6 @@ from torchvision import transforms
 from tqdm import tqdm
 
 from config import im_size, pickle_file, device
-from data_gen import data_transforms
 from utils import ensure_folder
 
 src_folder = '../Image-Matching/data/data/frame/cron20190326/'
@@ -26,7 +25,10 @@ if __name__ == "__main__":
     model = model.to(device)
     model.eval()
 
-    transformer = data_transforms['valid']
+    transformer = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+    ])
 
     with open(pickle_file, 'rb') as file:
         data = pickle.load(file)
