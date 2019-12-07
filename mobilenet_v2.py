@@ -170,6 +170,6 @@ def print_size_of_model(model):
 
 
 if __name__ == "__main__":
-    model = MobileNetV2().to(device)
+    model = MobileNetV2()
     print(model)
     scope(model, input_size=(3, 112, 112))
