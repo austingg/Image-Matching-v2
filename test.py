@@ -18,7 +18,7 @@ from utils import ensure_folder
 
 angles_file = 'data/angles.txt'
 test_file = 'data/test_pairs_rectified.txt'
-IMG_FOLDER = 'data/data/frame/cron20190326'
+IMG_FOLDER = '../Image-Matching/data/data/frame/cron20190326'
 transformer = data_transforms['val']
 
 
