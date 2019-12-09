@@ -45,7 +45,7 @@ $ python test.py
 
 #### 角度 theta 的分布
 
-![image](https://github.com/foamliu/Image-Matching/raw/master/images/theta_dist.png)
+![image](https://github.com/foamliu/Image-Matching-v2/raw/master/images/theta_dist.png)
 
 ##### False Positive
 16 false positives:
