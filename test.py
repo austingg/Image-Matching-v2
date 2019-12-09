@@ -231,6 +231,7 @@ def copy_original(old_file, new_file, old_folder=IMG_FOLDER):
     img = cv.imread(old_file)
     output = detect_corners(img)
     img = draw_bboxes(img, output, size=15)
+    img = cv.resize(img, (448, 448))
     new_fn = os.path.join('images', new_file)
     cv.imwrite(new_fn, img)
 
