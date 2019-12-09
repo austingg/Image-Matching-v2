@@ -23,6 +23,7 @@ dst_im_size = 256
 # model.eval()
 
 scripted_model_file = 'framedetector_scripted.pt'
+print('loading {}...'.format(scripted_model_file))
 model = torch.jit.load(scripted_model_file)
 model = model.to(device)
 model.eval()
