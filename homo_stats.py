@@ -49,6 +49,28 @@ def rotationMatrixToEulerAngles(R):
     return np.array([x, y, z])
 
 
+# Calculates Rotation Matrix given euler angles.
+def eulerAnglesToRotationMatrix(theta):
+    R_x = np.array([[1, 0, 0],
+                    [0, math.cos(theta[0]), -math.sin(theta[0])],
+                    [0, math.sin(theta[0]), math.cos(theta[0])]
+                    ])
+
+    R_y = np.array([[math.cos(theta[1]), 0, math.sin(theta[1])],
+                    [0, 1, 0],
+                    [-math.sin(theta[1]), 0, math.cos(theta[1])]
+                    ])
+
+    R_z = np.array([[math.cos(theta[2]), -math.sin(theta[2]), 0],
+                    [math.sin(theta[2]), math.cos(theta[2]), 0],
+                    [0, 0, 1]
+                    ])
+
+    R = np.dot(R_z, np.dot(R_y, R_x))
+
+    return R
+
+
 if __name__ == "__main__":
     scripted_model_file = 'framedetector_scripted.pt'
     model = torch.jit.load(scripted_model_file)
@@ -75,6 +97,12 @@ if __name__ == "__main__":
         dst_path = os.path.join(dst_folder, dir)
         ensure_folder(dst_path)
         dst_path = os.path.join(dst_path, file)
+
+        Tx_list = []
+        Ty_list = []
+        pitch_list = []
+        roll_list = []
+        yaw_list = []
 
         if not is_sample:
             h, w = raw.shape[:2]
@@ -106,8 +134,9 @@ if __name__ == "__main__":
 
             num, Rs, Ts, Ns = cv.decomposeHomographyMat(H, K)
 
-            print('Ts: ' + str(Ts))
-            print('Ns: ' + str(Ns))
+            print('Rs: ' + str(Rs))
+            # print('Ts: ' + str(Ts))
+            # print('Ns: ' + str(Ns))
 
             angles_list = []
             for i in range(num):
@@ -117,5 +146,6 @@ if __name__ == "__main__":
                     angles_list.append(angles)
 
             angles = [ang for ang in angles_list if ang[2] > 0][0]
-            print(angles)
+            R = eulerAnglesToRotationMatrix(angles)
+            print('R: ' + str(R))
             break
