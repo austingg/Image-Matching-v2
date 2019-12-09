@@ -197,7 +197,7 @@ def error_analysis(threshold):
         copy_file(file0, '{}_fp_0.jpg'.format(i))
         file1 = tokens[1]
         copy_file(file1, '{}_fp_1.jpg'.format(i))
-        copy_file(file1, '{}_fp_1_original.jpg'.format(i), IMG_FOLDER)
+        copy_original(file1, '{}_fp_1_original.jpg'.format(i), IMG_FOLDER)
 
     for i in range(num_fn):
         fn_id = fn[i]
@@ -207,7 +207,7 @@ def error_analysis(threshold):
         copy_file(file0, '{}_fn_0.jpg'.format(i))
         file1 = tokens[1]
         copy_file(file1, '{}_fn_1.jpg'.format(i))
-        copy_file(file1, '{}_fn_1_original.jpg'.format(i), IMG_FOLDER)
+        copy_original(file1, '{}_fn_1_original.jpg'.format(i), IMG_FOLDER)
 
     with open('data/errors.txt', 'w') as file:
         file.write('FP:\n')
@@ -220,6 +220,17 @@ def copy_file(old_file, new_file, old_folder=IMG_DIR_ALIGNED):
     old_file = os.path.join(old_folder, old_file)
     print(old_file)
     img = cv.imread(old_file)
+    new_fn = os.path.join('images', new_file)
+    cv.imwrite(new_fn, img)
+
+
+def copy_original(old_file, new_file, old_folder=IMG_FOLDER):
+    from align_images import detect_corners, draw_bboxes
+    old_file = os.path.join(old_folder, old_file)
+    print(old_file)
+    img = cv.imread(old_file)
+    output = detect_corners(img)
+    img = draw_bboxes(img, output, size=15)
     new_fn = os.path.join('images', new_file)
     cv.imwrite(new_fn, img)
 
