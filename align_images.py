@@ -52,7 +52,14 @@ def detect_corners(raw):
         p[0][0] = p[0][0] * w
         p[0][1] = p[0][1] * h
 
-    return p
+    return output
+
+
+def draw_bboxes(img, points, size=3):
+    for p in points:
+        cv.circle(img, (int(p[0][0]), int(p[0][1])), size, (0, 255, 0), -1)
+
+    return img
 
 
 if __name__ == "__main__":
