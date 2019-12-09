@@ -16,23 +16,46 @@ pickle_file = 'data/data.pkl'
 src_im_size = 224
 dst_im_size = 256
 
+# checkpoint = 'BEST_checkpoint.tar'
+# checkpoint = torch.load(checkpoint)
+# model = checkpoint['model'].module
+# model = model.to(torch.device('cpu'))
+# model.eval()
+
+scripted_model_file = 'framedetector_scripted.pt'
+model = torch.jit.load(scripted_model_file)
+model = model.to(device)
+model.eval()
+
+transformer = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+])
+
+
+def detect_corners(raw):
+    h, w = raw.shape[:2]
+    img = cv.resize(raw.copy(), (src_im_size, src_im_size))
+    img = img[..., ::-1]  # RGB
+    img = transforms.ToPILImage()(img)
+    img = transformer(img)
+    img = img.unsqueeze(0)
+    img = img.to(device)
+
+    with torch.no_grad():
+        outputs = model(img)
+
+    output = outputs[0].cpu().numpy()
+    output = np.reshape(output, (4, 1, 2))
+
+    for p in output:
+        p[0][0] = p[0][0] * w
+        p[0][1] = p[0][1] * h
+
+    return p
+
+
 if __name__ == "__main__":
-    # checkpoint = 'BEST_checkpoint.tar'
-    # checkpoint = torch.load(checkpoint)
-    # model = checkpoint['model'].module
-    # model = model.to(torch.device('cpu'))
-    # model.eval()
-
-    scripted_model_file = 'framedetector_scripted.pt'
-    model = torch.jit.load(scripted_model_file)
-    model = model.to(device)
-    model.eval()
-
-    transformer = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
-    ])
-
     with open(pickle_file, 'rb') as file:
         data = pickle.load(file)
 
@@ -50,24 +73,7 @@ if __name__ == "__main__":
         dst_path = os.path.join(dst_path, file)
 
         if not is_sample:
-            h, w = raw.shape[:2]
-            img = cv.resize(raw, (src_im_size, src_im_size))
-            img = img[..., ::-1]  # RGB
-            img = transforms.ToPILImage()(img)
-            img = transformer(img)
-            img = img.unsqueeze(0)
-            img = img.to(device)
-
-            with torch.no_grad():
-                outputs = model(img)
-
-            output = outputs[0].cpu().numpy()
-            output = np.reshape(output, (4, 1, 2))
-
-            for p in output:
-                p[0][0] = p[0][0] * w
-                p[0][1] = p[0][1] * h
-
+            output = detect_corners(raw)
             # output = output * im_size
             # print('output: ' + str(output))
             # print('output.shape: ' + str(output.shape))
@@ -76,7 +82,8 @@ if __name__ == "__main__":
             # cv.imwrite('test/result.jpg', img)
 
             src_pts = output
-            dst_pts = np.float32([[0, 0], [0, dst_im_size], [dst_im_size, dst_im_size], [dst_im_size, 0]]).reshape(-1, 1, 2)
+            dst_pts = np.float32([[0, 0], [0, dst_im_size], [dst_im_size, dst_im_size], [dst_im_size, 0]]).reshape(-1,
+                                                                                                                   1, 2)
             M, _ = cv.findHomography(src_pts, dst_pts, cv.RANSAC, 5.0)
             # print(M)
 
