@@ -98,7 +98,7 @@ if __name__ == "__main__":
             src_pts = output
             dst_pts = np.float32([[0, 0], [0, dst_im_size], [dst_im_size, dst_im_size], [dst_im_size, 0]]).reshape(-1,
                                                                                                                    1, 2)
-            M, _ = cv.findHomography(src_pts, dst_pts, cv.RANSAC, 5.0)
+            H, _ = cv.findHomography(src_pts, dst_pts, cv.RANSAC, 5.0)
             print(M)
 
             data = np.load('calib.npz')
