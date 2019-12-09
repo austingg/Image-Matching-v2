@@ -148,4 +148,8 @@ if __name__ == "__main__":
             angles = [ang for ang in angles_list if ang[2] > 0][0]
             R = eulerAnglesToRotationMatrix(angles)
             print('R: ' + str(R))
+
+            reconstr = np.dot(np.dot(R, Ts), Ns)
+            print('reconstr: ' + str(reconstr))
+
             break
