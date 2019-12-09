@@ -1,3 +1,4 @@
+import math
 import os
 import pickle
 
@@ -15,6 +16,38 @@ dst_folder = 'data/cron20190326_aligned/'
 pickle_file = 'data/data.pkl'
 src_im_size = 224
 dst_im_size = 256
+
+
+# Checks if a matrix is a valid rotation matrix.
+def isRotationMatrix(R):
+    Rt = np.transpose(R)
+    shouldBeIdentity = np.dot(Rt, R)
+    I = np.identity(3, dtype=R.dtype)
+    n = np.linalg.norm(I - shouldBeIdentity)
+    return n < 1e-6
+
+
+# Calculates rotation matrix to euler angles
+# The result is the same as MATLAB except the order
+# of the euler angles ( x and z are swapped ).
+def rotationMatrixToEulerAngles(R):
+    assert (isRotationMatrix(R))
+
+    sy = math.sqrt(R[0, 0] * R[0, 0] + R[1, 0] * R[1, 0])
+
+    singular = sy < 1e-6
+
+    if not singular:
+        x = math.atan2(R[2, 1], R[2, 2])
+        y = math.atan2(-R[2, 0], sy)
+        z = math.atan2(R[1, 0], R[0, 0])
+    else:
+        x = math.atan2(-R[1, 2], R[1, 1])
+        y = math.atan2(-R[2, 0], sy)
+        z = 0
+
+    return np.array([x, y, z])
+
 
 if __name__ == "__main__":
     scripted_model_file = 'framedetector_scripted.pt'
@@ -63,9 +96,21 @@ if __name__ == "__main__":
                 p[0][1] = p[0][1] * h
 
             src_pts = output
-            dst_pts = np.float32([[0, 0], [0, dst_im_size], [dst_im_size, dst_im_size], [dst_im_size, 0]]).reshape(-1, 1, 2)
+            dst_pts = np.float32([[0, 0], [0, dst_im_size], [dst_im_size, dst_im_size], [dst_im_size, 0]]).reshape(-1,
+                                                                                                                   1, 2)
             M, _ = cv.findHomography(src_pts, dst_pts, cv.RANSAC, 5.0)
             print(M)
+
+            data = np.load('calib.npz')
+            K = data['mtx']
+
+            num, Rs, Ts, Ns = cv.decomposeHomographyMat(H, K)
+
+            print(num)
+            for i in range(num):
+                R = Rs[i]
+                if isRotationMatrix(R):
+                    angles = rotationMatrixToEulerAngles(R)
+                    print(angles)
+
             break
-
-
