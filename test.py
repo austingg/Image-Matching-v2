@@ -185,8 +185,8 @@ def error_analysis(threshold):
     num_fp = len(fp)
     num_fn = len(fn)
 
-    filename = 'data/test_pairs.txt'
-    with open(filename, 'r') as file:
+    # filename = 'data/test_pairs.txt'
+    with open(test_file, 'r') as file:
         pair_lines = file.readlines()
 
     for i in range(num_fp):
