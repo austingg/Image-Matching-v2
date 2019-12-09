@@ -294,7 +294,7 @@ if __name__ == "__main__":
     # scripted_quantized_model_file = 'mobilenet_quantization_scripted_quantized.pth'
     # model = torch.jit.load(scripted_quantized_model_file)
 
-    scripted_float_model_file = 'mobilenet_quantization_scripted.pth'
+    scripted_float_model_file = 'image_matching_mobile_scripted.pt'
     model = torch.jit.load(scripted_float_model_file)
 
     model = model.to(device)
