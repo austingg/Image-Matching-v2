@@ -109,11 +109,13 @@ if __name__ == "__main__":
             print('Ts: ' + str(Ts))
             print('Ns: ' + str(Ns))
 
-            print(num)
+            angles_list = []
             for i in range(num):
                 R = Rs[i]
                 if isRotationMatrix(R):
                     angles = rotationMatrixToEulerAngles(R)
-                    print(angles)
+                    angles_list.append(angles)
 
+            angles = [ang for ang in angles_list if ang[2] > 0][0]
+            print(angles)
             break
