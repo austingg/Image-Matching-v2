@@ -135,8 +135,8 @@ if __name__ == "__main__":
             num, Rs, Ts, Ns = cv.decomposeHomographyMat(H, K)
 
             print('Rs: ' + str(Rs))
-            # print('Ts: ' + str(Ts))
-            # print('Ns: ' + str(Ns))
+            print('Ts: ' + str(Ts))
+            print('Ns: ' + str(Ns))
 
             angles_list = []
             for i in range(num):
