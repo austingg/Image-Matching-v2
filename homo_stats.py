@@ -99,12 +99,15 @@ if __name__ == "__main__":
             dst_pts = np.float32([[0, 0], [0, dst_im_size], [dst_im_size, dst_im_size], [dst_im_size, 0]]).reshape(-1,
                                                                                                                    1, 2)
             H, _ = cv.findHomography(src_pts, dst_pts, cv.RANSAC, 5.0)
-            print(M)
+            print('H: ' + str(H))
 
             data = np.load('calib.npz')
             K = data['mtx']
 
             num, Rs, Ts, Ns = cv.decomposeHomographyMat(H, K)
+
+            print('Ts: ' + str(Ts))
+            print('Ns: ' + str(Ns))
 
             print(num)
             for i in range(num):
