@@ -3,7 +3,6 @@ import time
 import torch
 
 from mobilenet_v2 import MobileNetV2
-from models import ArcMarginModel
 
 if __name__ == '__main__':
     checkpoint = 'BEST_checkpoint.tar'
@@ -39,3 +38,6 @@ if __name__ == '__main__':
     # metric_fc = ArcMarginModel()
     # metric_fc.load_state_dict(torch.load(filename))
     # print('elapsed {} sec'.format(time.time() - start))
+
+    scripted_float_model_file = 'image_matching_mobile_scripted.pt'
+    torch.jit.save(torch.jit.script(model), scripted_float_model_file)
